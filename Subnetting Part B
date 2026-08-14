@@ -1,0 +1,83 @@
+import java.util.Scanner;
+
+public class SubnetCalculator {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int o1, o2, o3, o4;
+        int cidr;
+
+        // Get IP address
+        System.out.print("Enter base IP address (e.g., 192.168.10.0): ");
+
+        String ip = sc.next();
+        String[] parts = ip.split("\\.");
+
+        o1 = Integer.parseInt(parts[0]);
+        o2 = Integer.parseInt(parts[1]);
+        o3 = Integer.parseInt(parts[2]);
+        o4 = Integer.parseInt(parts[3]);
+
+        // Get CIDR
+        System.out.print("Enter CIDR prefix (e.g., 26 for /26): ");
+        cidr = sc.nextInt();
+
+        // Check CIDR
+        if (cidr < 24 || cidr > 30) {
+            System.out.println("Error: Enter CIDR between 24 and 30.");
+            return;
+        }
+
+        // Calculate subnet details
+        int hostBits = 32 - cidr;
+        int blockSize = (int) Math.pow(2, hostBits);
+        int numSubnets = 256 / blockSize;
+        int usableHosts = blockSize - 2;
+        int mask = 256 - blockSize;
+
+        // Display general information
+        System.out.println("\n--- General Subnet Information ---");
+        System.out.println("Subnet Mask          : 255.255.255." + mask);
+        System.out.println("Usable Hosts         : " + usableHosts);
+        System.out.println("Number of Subnets    : " + numSubnets);
+
+        // Display each subnet
+        for (int i = 0; i < numSubnets; i++) {
+
+            int network = i * blockSize;
+            int firstHost = network + 1;
+            int lastHost = network + blockSize - 2;
+            int broadcast = network + blockSize - 1;
+
+            System.out.println("\n-----------------------------");
+            System.out.println("Subnet " + (i + 1));
+            System.out.println("-----------------------------");
+
+            System.out.println("Network   : "
+                    + o1 + "." + o2 + "." + o3 + "." + network);
+
+            System.out.println("First Host: "
+                    + o1 + "." + o2 + "." + o3 + "." + firstHost);
+
+            System.out.println("Last Host : "
+                    + o1 + "." + o2 + "." + o3 + "." + lastHost);
+
+            System.out.println("Broadcast : "
+                    + o1 + "." + o2 + "." + o3 + "." + broadcast);
+
+            // Display usable IP addresses
+            System.out.println("Usable IP Addresses:");
+
+            for (int j = firstHost; j <= lastHost; j++) {
+                System.out.println(
+                    o1 + "." + o2 + "." + o3 + "." + j
+                );
+            }
+        }
+
+        sc.close();
+    }
+}
+
