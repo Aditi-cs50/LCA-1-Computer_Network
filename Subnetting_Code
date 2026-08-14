@@ -1,0 +1,55 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print(&quot;Enter IP Address: &quot;);
+        String ip = sc.next();
+
+        System.out.print(&quot;Enter number of subnets required: &quot;);
+        int subnets = sc.nextInt();
+
+        String[] parts = ip.split(&quot;\\.&quot;);
+
+        int first = Integer.parseInt(parts[0]);
+
+        int defaultMask;
+
+        if (first &lt;= 126) {
+            defaultMask = 8;
+        } else if (first &lt;= 191) {
+            defaultMask = 16;
+        } else {
+            defaultMask = 24;
+        }
+
+        int bits = 0;
+
+        while (Math.pow(2, bits) &lt; subnets) {
+            bits++;
+        }
+
+        int newMask = defaultMask + bits;
+
+        System.out.println(&quot;\n--- SUBNETTING ---&quot;);
+        System.out.println(&quot;IP Address: &quot; + ip);
+        System.out.println(&quot;Default Subnet Mask: /&quot; + defaultMask);
+        System.out.println(&quot;Number of Subnets: &quot; + subnets);
+        System.out.println(&quot;Borrowed Bits: &quot; + bits);
+        System.out.println(&quot;New Subnet Mask: /&quot; + newMask);
+
+        int maskValue = 256 - (int)Math.pow(2, 8 - bits);
+
+        if (newMask &lt;= 16) {
+            System.out.println(&quot;Subnet Mask: 255.&quot; + maskValue + &quot;.0.0&quot;);
+        } else if (newMask &lt;= 24) {
+            System.out.println(&quot;Subnet Mask: 255.255.&quot; + maskValue + &quot;.0&quot;);
+        } else {
+            System.out.println(&quot;Subnet Mask: 255.255.255.&quot; + maskValue);
+        }
+
+        sc.close();
+    }
+}
