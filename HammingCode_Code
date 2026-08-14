@@ -1,0 +1,80 @@
+import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print(&quot;Enter 4-bit data: &quot;);
+        String data = sc.next();
+        int m = data.length();
+        int r = 0;
+        while (Math.pow(2, r) &lt; (m + r + 1)) {
+            r++;
+        }
+        System.out.println(&quot;No of Parity Bits = &quot; + r);
+        int totalBits = m + r;
+        System.out.println(&quot;Parity Bit Positions:&quot;);
+        for (int i = 1; i &lt;= totalBits; i++) {
+            if ((i &amp; (i - 1)) == 0) {
+                System.out.println(&quot;P&quot; + i + &quot; at position &quot; + i);
+            }
+        }
+        int[] hamming = new int[totalBits + 1];
+        int j = 0;
+        for (int i = 1; i &lt;= totalBits; i++) {
+            if ((i &amp; (i - 1)) != 0) {
+                hamming[i] = data.charAt(j) - &#39;0&#39;;
+                j++;
+            }
+        }
+        for (int p = 1; p &lt;= totalBits; p = p * 2) {
+            int parity = 0;
+            for (int i = 1; i &lt;= totalBits; i++) {
+                if ((i &amp; p) != 0)
+
+    parity = parity ^ hamming[i];
+                }
+            }
+            hamming[p] = parity;
+        }
+        System.out.print(&quot;\nGenerated Hamming Code: &quot;);
+        for (int i = 1; i &lt;= totalBits; i++) {
+            System.out.print(hamming[i]);
+        }
+        System.out.print(&quot;\n\nEnter received code: &quot;);
+        String received = sc.next();
+        int[] receive = new int[totalBits + 1];
+        for (int i = 1; i &lt;= totalBits; i++) {
+            receive[i] = received.charAt(i - 1) - &#39;0&#39;;
+        }
+        int error = 0;
+        for (int p = 1; p &lt;= totalBits; p = p * 2) {
+            int parity = 0;
+            for (int i = 1; i &lt;= totalBits; i++) {
+                if ((i &amp; p) != 0) {
+                    parity = parity ^ receive[i];
+                }
+            }
+            if (parity != 0) {
+                error = error + p;
+            }
+        }
+        if (error == 0) {
+            System.out.println(&quot;No error detected.&quot;);
+        } else {
+            System.out.println(&quot;Error found at position: &quot; + error);
+
+  receive[error] = receive[error] ^ 1;
+            System.out.print(&quot;Corrected Code: &quot;);
+            for (int i = 1; i &lt;= totalBits; i++) {
+                System.out.print(receive[i]);
+            }
+            System.out.println();
+        }
+        System.out.print(&quot;Decoded Data: &quot;);
+        for (int i = 1; i &lt;= totalBits; i++) {
+            if ((i &amp; (i - 1)) != 0) {
+                System.out.print(receive[i]);
+            }
+        }
+        sc.close();
+    }
+}
